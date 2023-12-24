@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/template_fire_floor",
+  "textures": {
+    "fire1": "minecraft:block/soul_fire_1",
+    "fire": "minecraft:block/soul_fire_2"
+  }
+}
