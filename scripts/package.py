@@ -1,5 +1,6 @@
 """Rename every subdirectory in `versions` to "VanillaPvP <version>" and put them in zip files"""
 
+import subprocess
 from pathlib import Path
 from shutil import rmtree
 from zipfile import ZipFile
@@ -21,7 +22,7 @@ def main() -> None:
 
         version = version_dir.name
 
-        zip_name = f"VanillaPvP {version}.zip"
+        zip_name = f"VanillaPvP_{get_vanillapvp_version()}_for_{version}.zip"
         zip_path = PACKAGE_DIR / zip_name
         with ZipFile(zip_path, "w") as zip_file:
             copytree_to_zip(version_dir, zip_file)
@@ -37,6 +38,14 @@ def copytree_to_zip(source: Path, destination_zip: ZipFile):
             if file_path.is_file():
                 archive_path = file_path.relative_to(source)
                 zipf.write(file_path, arcname=archive_path)
+
+
+def get_vanillapvp_version() -> str:
+    output = subprocess.run(
+        ["git", "describe", "--tags", "--abbrev=0"], capture_output=True
+    )
+    version = output.stdout.decode("utf-8").strip()
+    return version
 
 
 if __name__ == "__main__":
