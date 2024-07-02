@@ -1,4 +1,4 @@
-"""Rename every subdirectory in `versions` to "VanillaPvP <version>" and put them in zip files"""
+"""Rename every subdirectory in `versions` to `VanillaPvP <version>` and place them in ZIP files."""
 
 import subprocess
 from pathlib import Path
@@ -14,25 +14,28 @@ def main() -> None:
     if PACKAGE_DIR.exists():
         rmtree(PACKAGE_DIR)
         print("Removed old packages")
+
     PACKAGE_DIR.mkdir()
 
-    for version_dir in VERSIONS_DIR.glob("*"):
+    vanillapvp_version = get_vanillapvp_version()
+
+    for version_dir in VERSIONS_DIR.iterdir():
         if not version_dir.is_dir():
             continue
 
-        version = version_dir.name
+        mc_version = version_dir.name
 
-        zip_name = f"VanillaPvP_{get_vanillapvp_version()}_for_{version}.zip"
+        zip_name = f"VanillaPvP_{vanillapvp_version}_for_{mc_version}.zip"
         zip_path = PACKAGE_DIR / zip_name
         with ZipFile(zip_path, "w") as zip_file:
-            copytree_to_zip(version_dir, zip_file)
+            copy_to_zip(version_dir, zip_file)
 
-        print(f"{version} -> {zip_path}")
+        print(f"{mc_version} -> {zip_path}")
 
     print("Done!")
 
 
-def copytree_to_zip(source: Path, destination_zip: ZipFile):
+def copy_to_zip(source: Path, destination_zip: ZipFile):
     with destination_zip as zipf:
         for file_path in source.glob("**/*"):
             if file_path.is_file():
